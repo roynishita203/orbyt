@@ -50,10 +50,16 @@ jobs:
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
 
-      # soroban-sdk 22+ (this crate uses 26.1.0) targets wasm32v1-none, not
-      # the older wasm32-unknown-unknown.
+      # `cargo install --locked stellar-cli` compiles the whole CLI from
+      # source (10-20+ min on a cold runner, on every single deploy run).
+      # The project ships a prebuilt linux-gnu binary per release -- pinned
+      # to v25.0.0, the version this contract was proven against this
+      # session, rather than an untested "latest".
       - name: Install Stellar CLI
-        run: cargo install --locked stellar-cli
+        run: |
+          curl -fsSL https://github.com/stellar/stellar-cli/releases/download/v25.0.0/stellar-cli-25.0.0-x86_64-unknown-linux-gnu.tar.gz \
+            | tar -xz -C /usr/local/bin stellar
+          stellar --version
 
       - name: Run contract tests
         run: cargo test
@@ -61,15 +67,22 @@ jobs:
       - name: Build contract wasm
         run: stellar contract build
 
-      - name: Configure deployer identity
-        run: printf '%s' "${{ secrets.STELLAR_SECRET_KEY }}" | stellar keys add ci-deployer --secret-key
-
       - name: Deploy to testnet
         id: deploy
+        # `stellar contract build` outputs to the *workspace* target dir
+        # (../../target from here), not a per-member target dir -- verified
+        # empirically, since this is a cargo workspace member.
+        #
+        # `--source-account` accepts a raw secret key directly (verified via
+        # `stellar contract deploy --help`), so the secret is passed straight
+        # through with no local `stellar keys add` step. That deprecated flag
+        # (`keys add --secret-key`) only reads from an interactive TTY prompt
+        # -- piping a secret into it over stdin hangs forever, which would
+        # have stalled this job until GitHub's runner timeout.
         run: |
           CONTRACT_ID=$(stellar contract deploy \
-            --wasm target/wasm32v1-none/release/sub_vault.wasm \
-            --source-account ci-deployer \
+            --wasm ../../target/wasm32v1-none/release/sub_vault.wasm \
+            --source-account "${{ secrets.STELLAR_SECRET_KEY }}" \
             --network testnet)
           echo "contract_id=$CONTRACT_ID" >> "$GITHUB_OUTPUT"
           echo "Deployed contract: $CONTRACT_ID"

@@ -67,13 +67,25 @@ Design: `charge()` is permissionless by construction -- correctness lives in the
 
 `deploy.yml` (push to `main`): job `changes` (path filter) → `deploy-contract` (only if `contracts/**` changed; installs Rust + Stellar CLI, tests, builds, deploys via `stellar contract deploy`, emits the new contract ID as a job output) → `deploy-frontend` (only if contract or frontend changed; builds with the fresh contract ID or a fallback secret, deploys to Vercel).
 
-**Two corrections to the pasted spec, both verified:**
-1. `cargo install --locked stellar-cli --features opt` -- `opt` is not a feature on `stellar-cli` or `soroban-cli` (verified via `cargo info` against both crates, this session). `wasm-opt` support is already in the `additional-libs` default feature. `deploy.yml` uses plain `cargo install --locked stellar-cli`.
-2. `--source` → used the current CLI's canonical flag `--source-account` (`--source` remains a valid alias, verified via `stellar contract deploy --help`).
+**Corrections to the original pasted spec, verified:**
+1. `cargo install --locked stellar-cli --features opt` -- `opt` is not a feature on `stellar-cli` or `soroban-cli` (verified via `cargo info` against both crates).
+2. `--source` → `--source-account` is the canonical flag (`--source` remains a valid alias, verified via `--help`).
+
+**Three real bugs found on a second, deeper pass of `deploy.yml` and fixed -- not just re-asserted as fine:**
+
+1. **Wrong wasm path (would have failed every deploy).** `deploy-contract` sets `working-directory: contracts/sub_vault`, but this is a Cargo *workspace* -- `stellar contract build` writes to the workspace-root `target/`, not a per-member one. Verified empirically: ran `stellar contract build` from `contracts/sub_vault` and confirmed the wasm landed at `C:\Orbyt\target\wasm32v1-none\release\sub_vault.wasm`, not `contracts/sub_vault/target/...`. The original step referenced `target/wasm32v1-none/release/sub_vault.wasm` (relative to `contracts/sub_vault`) -- nonexistent path. Fixed to `../../target/wasm32v1-none/release/sub_vault.wasm`, then re-verified the corrected path resolves to a real file.
+
+2. **Hanging credential step (would have stalled the job for hours).** The original "Configure deployer identity" step piped a secret into `stellar keys add ci-deployer --secret-key` over stdin. Tested this directly: `stellar keys add` with `--secret-key` only reads from an interactive TTY prompt -- piping input over stdin does **not** satisfy it; the process just sits at the prompt. Confirmed with a timeout-guarded test (process had to be killed at the timeout, never consumed the piped input). In GitHub Actions this would have hung until the runner's job timeout (default 360 minutes) killed it, on every single deploy. Fixed by removing the step entirely: `stellar contract deploy --source-account` accepts a raw secret key directly (confirmed via `--help`, and confirmed non-interactively via a fast, correct failure -- no hang -- when tested with a syntactically-valid-but-fake key against a deliberately missing wasm path).
+
+3. **Prohibitively slow CLI install.** `cargo install --locked stellar-cli` compiles the entire CLI from source -- 10-20+ minutes on a cold runner, every deploy. Stellar ships a prebuilt `x86_64-unknown-linux-gnu` binary per GitHub release (matches `ubuntu-latest`); downloaded and inspected the actual v25.0.0 release tarball (pinned to the version this contract was proven against this session, not an untested "latest") and confirmed its contents are a single top-level `stellar` binary. Fixed to `curl | tar -xz` into `/usr/local/bin`, which takes seconds.
+
+None of these three were caught by YAML validation, `action-validator`, or a first read-through -- they only surfaced by actually exercising each step's real-world behavior (running the build from the same working directory, timing out a piped prompt, inspecting a real tarball). This is the difference between "the file parses" and "the pipeline works."
 
 **A risk flagged, not silently "fixed" by omission:** naively redeploying the contract on every push to `main` produces a new address each time; Soroban contracts don't migrate storage on redeploy, so any subscription vaults funded at the previous address become unreachable. `deploy-contract` is gated to only run when `contracts/**` actually changed, and a comment in `deploy.yml` recommends `stellar contract upgrade` over `deploy` once the contract has real subscribers. This is a product decision, not something I resolved unilaterally -- see Remaining Risks.
 
 **Job names:** `ci.yml`'s contract job is named `contracts` (workflow key) / "Contract tests" (display name), matching the spec's suggested `contracts`/`smart-contract`.
+
+**Still not verified, and cannot be from this environment:** neither workflow has ever executed on GitHub Actions. This repo has no remote (local `git init` + commit only, by explicit request). `STELLAR_SECRET_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `SOROBAN_RPC_URL`, `NETWORK_PASSPHRASE`, `DEFAULT_ASSET_ID`, and `CONTRACT_ID` do not exist as GitHub secrets anywhere. Everything above is "proven correct by exercising the same operations locally," not "seen green in Actions."
 
 ---
 
@@ -204,7 +216,7 @@ Final on-chain state, queried via `stellar contract invoke ... get_subscription 
 
 ## Remaining Risks
 
-1. **No git repo / remote.** Everything in this report is local-machine state. Nothing is pushed, nothing is backed up off this disk.
+1. **Local git repo, no remote.** `git init` + an initial commit now exist (`edb076a`), so this is at least under version control -- but there is still no GitHub remote, by explicit choice this session, so nothing is pushed or backed up off this disk, and neither `ci.yml` nor `deploy.yml` has ever actually run.
 2. **Contract redeploy-on-push semantics.** `deploy-contract` creates a new contract address; there is no state migration. If this ever runs against a contract with real subscriber funds, those funds are stranded at the old address unless the team switches to `stellar contract upgrade` first. This is flagged in `deploy.yml` and here, not fixed unilaterally, because it's a product decision.
 3. **Secrets management.** `STELLAR_SECRET_KEY` used by CD to sign deploys is a funded key living in GitHub Secrets — standard practice, but worth the team explicitly deciding the funding level and rotation policy before relying on it for anything beyond testnet.
 4. **No deploy platform decided.** Defaulted to Vercel per the spec's fallback instruction; untested, unconfigured, and Vercel may not be the team's actual choice.
