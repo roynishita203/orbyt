@@ -1,0 +1,121 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  changes:
+    name: Detect changed paths
+    runs-on: ubuntu-latest
+    outputs:
+      contract: ${{ steps.filter.outputs.contract }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            contract:
+              - 'contracts/**'
+            frontend:
+              - 'frontend/**'
+
+  # Redeploying SubVault creates a brand-new contract address -- Soroban
+  # contracts don't migrate state on redeploy, so any subscription vaults
+  # already funded at the previous address become unreachable at the new
+  # one. Only run this when contract source actually changed, and treat it
+  # as intentional: for a live system with real funds, prefer
+  # `stellar contract upgrade` (same address, same storage) over `deploy`
+  # once the contract has real subscribers. See SPEC.md.
+  deploy-contract:
+    name: Deploy contract to testnet
+    needs: changes
+    if: needs.changes.outputs.contract == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts/sub_vault
+    outputs:
+      contract_id: ${{ steps.deploy.outputs.contract_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32v1-none
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      # soroban-sdk 22+ (this crate uses 26.1.0) targets wasm32v1-none, not
+      # the older wasm32-unknown-unknown.
+      - name: Install Stellar CLI
+        run: cargo install --locked stellar-cli
+
+      - name: Run contract tests
+        run: cargo test
+
+      - name: Build contract wasm
+        run: stellar contract build
+
+      - name: Configure deployer identity
+        run: printf '%s' "${{ secrets.STELLAR_SECRET_KEY }}" | stellar keys add ci-deployer --secret-key
+
+      - name: Deploy to testnet
+        id: deploy
+        run: |
+          CONTRACT_ID=$(stellar contract deploy \
+            --wasm target/wasm32v1-none/release/sub_vault.wasm \
+            --source-account ci-deployer \
+            --network testnet)
+          echo "contract_id=$CONTRACT_ID" >> "$GITHUB_OUTPUT"
+          echo "Deployed contract: $CONTRACT_ID"
+
+  deploy-frontend:
+    name: Deploy frontend
+    needs: [changes, deploy-contract]
+    if: |
+      always() &&
+      needs.deploy-contract.result != 'failure' &&
+      (needs.changes.outputs.frontend == 'true' || needs.changes.outputs.contract == 'true')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          # Falls back to a pinned CONTRACT_ID secret when this run didn't
+          # redeploy the contract (deploy-contract skipped -- no output).
+          VITE_CONTRACT_ID: ${{ needs.deploy-contract.outputs.contract_id || secrets.CONTRACT_ID }}
+          VITE_RPC_URL: ${{ secrets.SOROBAN_RPC_URL }}
+          VITE_NETWORK_PASSPHRASE: ${{ secrets.NETWORK_PASSPHRASE }}
+          VITE_DEFAULT_ASSET_ID: ${{ secrets.DEFAULT_ASSET_ID }}
+
+      # No deploy platform is configured in this repo yet (no vercel.json /
+      # netlify.toml / railway.json) -- defaulting to Vercel. Requires
+      # VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID secrets (the latter
+      # two come from running `vercel link` once locally against the
+      # intended Vercel project); vercel deploy fails non-interactively
+      # without them even if VERCEL_TOKEN is set.
+      - name: Deploy to Vercel
+        run: npx vercel deploy --prod --token "${{ secrets.VERCEL_TOKEN }}" --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
