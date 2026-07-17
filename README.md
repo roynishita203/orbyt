@@ -78,32 +78,10 @@ See [`SPEC.md`](./SPEC.md) for the full contract interface, error cases, and eve
 
 ## Screenshots
 
-All screenshots are captured against Stellar **Testnet** with the Freighter wallet.
-See [`docs/screenshots/`](docs/screenshots/) for what each image must show.
-
-### Wallet options available
-
-![The wallet connect dialog showing the available wallet options](docs/screenshots/00-wallet-options.png)
-
-### Wallet connected state
-
-![Freighter wallet connected, showing the connected account address](docs/screenshots/01-wallet-connected.png)
-
-### Balance displayed
-
-![Vault / account balance displayed in the app](docs/screenshots/02-balance-displayed.png)
-
-### Successful testnet transaction
-
-![A subscribe / charge transaction submitted and confirmed on testnet](docs/screenshots/03-testnet-transaction.png)
-
-### Transaction result shown to the user
-
-![The transaction result (hash / success state) surfaced back to the user in the UI](docs/screenshots/04-transaction-result.png)
-
 ### Mobile responsive UI
 
-![The app rendered on a mobile viewport, showing the responsive layout](docs/screenshots/05-mobile-responsive.png)
+![The app rendered on a mobile viewport, showing the responsive layout](<img width="807" height="773" alt="Screenshot 2026-06-16 215552" src="https://github.com/user-attachments/assets/9fa06a35-c08b-4cf5-99d0-f8cdd39295ff" />
+)
 
 ## Quick start
 
