@@ -27,7 +27,7 @@ export default function ProjectForm() {
           {/* Header */}
           <div className="mb-8">
             <p className="text-white text-base md:text-lg leading-relaxed">
-              SubVault is live on Stellar Testnet right now. Here's how to try it.
+              SubVault is live on Stellar Testnet right now. Here&apos;s how to try it.
             </p>
           </div>
 
