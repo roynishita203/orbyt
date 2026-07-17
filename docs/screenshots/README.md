@@ -5,6 +5,8 @@ filenames so the main [`README.md`](../../README.md) renders them:
 
 | Filename | Must show |
 | --- | --- |
+| `00-wallet-options.png` | The **wallet options available** — the connect dialog / list of selectable wallet(s) before connecting. |
+| `05-mobile-responsive.png` | The **mobile responsive UI** — the app on a narrow/mobile viewport (use browser dev-tools device mode, e.g. iPhone). |
 | `01-wallet-connected.png` | The **wallet connected** state — Freighter connected, the account address (and network = Testnet) visible in the UI. |
 | `02-balance-displayed.png` | The **balance displayed** — the vault / account balance shown in the app. |
 | `03-testnet-transaction.png` | A **successful testnet transaction** — a subscribe / top-up / charge action submitted and confirmed on Stellar Testnet. |

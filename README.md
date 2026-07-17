@@ -20,6 +20,28 @@ Marketing site + dashboard (Stellar **Testnet**): **https://orbyt-ashen.vercel.a
 
 Requires the [Freighter](https://www.freighter.app/) browser wallet (set to Testnet) to connect and sign.
 
+## Deployment & on-chain proof
+
+Everything below is live on **Stellar Testnet** and verifiable on Stellar Explorer.
+
+| Item | Value |
+| --- | --- |
+| **Deployed contract address** | `CBP5MBVXH7TVFXV6P6JPYM5D7N53KZPGTHXNGFCCJONAKBLLPYQW5SBI` |
+| Payment asset (SAC) | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` |
+| Network | Testnet (`Test SDF Network ; September 2015`) |
+| RPC | `https://soroban-testnet.stellar.org` |
+
+- **Contract on Stellar Explorer:** <https://stellar.expert/explorer/testnet/contract/CBP5MBVXH7TVFXV6P6JPYM5D7N53KZPGTHXNGFCCJONAKBLLPYQW5SBI>
+- **Contract deployment transaction:** [`035da692…b3e7e`](https://stellar.expert/explorer/testnet/tx/035da69216f8928e41e656146279927b590a4e08ee5ac9b50fd8428c813b3e7e)
+
+### Transaction hash of a contract call
+
+A real `create_plan` invocation of the deployed contract (creates `plan_id 2`, emits `plan_created`):
+
+**`b8091c825c00735d8eb001c74ce609ded872d7f087ce632abff31220a2e93187`**
+
+Verify it on Stellar Explorer: <https://stellar.expert/explorer/testnet/tx/b8091c825c00735d8eb001c74ce609ded872d7f087ce632abff31220a2e93187>
+
 ## How it works
 
 1. A merchant calls `create_plan(merchant, amount, interval_secs, asset)` and gets a `plan_id`.
@@ -40,6 +62,14 @@ See [`SPEC.md`](./SPEC.md) for the full contract interface, error cases, and eve
 ## Screenshots
 
 All screenshots are captured against Stellar **Testnet** with the Freighter wallet.
+
+### Wallet options available
+
+![The wallet connect dialog showing the available wallet options](docs/screenshots/00-wallet-options.png)
+
+### Mobile responsive UI
+
+![The app rendered on a mobile viewport, showing the responsive layout](docs/screenshots/05-mobile-responsive.png)
 
 ### Wallet connected state
 
