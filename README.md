@@ -11,6 +11,15 @@ frontend/              React app (Subscriber + Merchant views)
 scripts/deploy.sh      Testnet deploy script
 ```
 
+## Live demo
+
+Marketing site + dashboard (Stellar **Testnet**): **https://orbyt-ashen.vercel.app**
+
+- Landing page: <https://orbyt-ashen.vercel.app>
+- App / dashboard: <https://orbyt-ashen.vercel.app/app>
+
+Requires the [Freighter](https://www.freighter.app/) browser wallet (set to Testnet) to connect and sign.
+
 ## How it works
 
 1. A merchant calls `create_plan(merchant, amount, interval_secs, asset)` and gets a `plan_id`.
@@ -27,6 +36,26 @@ scripts/deploy.sh      Testnet deploy script
    `Active`), `cancel_subscription` at any time, and `withdraw_remaining` once cancelled.
 
 See [`SPEC.md`](./SPEC.md) for the full contract interface, error cases, and events.
+
+## Screenshots
+
+All screenshots are captured against Stellar **Testnet** with the Freighter wallet.
+
+### Wallet connected state
+
+![Freighter wallet connected, showing the connected account address](docs/screenshots/01-wallet-connected.png)
+
+### Balance displayed
+
+![Vault / account balance displayed in the app](docs/screenshots/02-balance-displayed.png)
+
+### Successful testnet transaction
+
+![A subscribe / charge transaction submitted and confirmed on testnet](docs/screenshots/03-testnet-transaction.png)
+
+### Transaction result shown to the user
+
+![The transaction result (hash / success state) surfaced back to the user in the UI](docs/screenshots/04-transaction-result.png)
 
 ## Quick start
 
