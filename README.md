@@ -18,7 +18,7 @@ scripts/deploy.sh      Testnet deploy script
 | Public GitHub repository | <https://github.com/roynishita203/orbyt> |
 | README with setup instructions | [Quick start](#quick-start) |
 | 2+ meaningful commits | see the repo commit history |
-| Live demo (deployed) | [Live demo](#live-demo) — <https://orbyt-ashen.vercel.app> |
+| Live demo (deployed) | [Live demo](#live-demo) — <https://orbytmarket.vercel.app> |
 | Deployed contract address | [Deployment & on-chain proof](#deployment--on-chain-proof) |
 | Transaction hash of a contract call (verifiable) | [Deployment & on-chain proof](#transaction-hash-of-a-contract-call) |
 | Screenshot: wallet options available | [Screenshots](#screenshots) |
@@ -30,10 +30,10 @@ scripts/deploy.sh      Testnet deploy script
 
 ## Live demo
 
-Marketing site + dashboard (Stellar **Testnet**): **https://orbyt-ashen.vercel.app**
+Marketing site + dashboard (Stellar **Testnet**): **https://orbytmarket.vercel.app**
 
-- Landing page: <https://orbyt-ashen.vercel.app>
-- App / dashboard: <https://orbyt-ashen.vercel.app/app>
+- Landing page: <https://orbytmarket.vercel.app>
+- App / dashboard: <https://orbytmarket.vercel.app/app>
 
 Requires the [Freighter](https://www.freighter.app/) browser wallet (set to Testnet) to connect and sign.
 

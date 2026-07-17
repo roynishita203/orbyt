@@ -16,7 +16,7 @@ filenames so the main [`README.md`](../../README.md) renders them:
 
 1. Install the [Freighter](https://www.freighter.app/) browser extension and switch it to **Testnet**.
 2. Fund your testnet account at <https://friendbot.stellar.org> (or the Freighter faucet).
-3. Open the app — either the live demo at <https://orbyt-ashen.vercel.app/app> or run it locally
+3. Open the app — either the live demo at <https://orbytmarket.vercel.app/app> or run it locally
    (`cd frontend && npm run dev`, then <http://localhost:5173>).
 4. Connect the wallet → capture **01**.
 5. With a plan/subscription funded, capture the balance → **02**.
