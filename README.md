@@ -11,6 +11,23 @@ frontend/              React app (Subscriber + Merchant views)
 scripts/deploy.sh      Testnet deploy script
 ```
 
+## Submission checklist
+
+| Requirement | Where |
+| --- | --- |
+| Public GitHub repository | <https://github.com/roynishita203/orbyt> |
+| README with setup instructions | [Quick start](#quick-start) |
+| 2+ meaningful commits | see the repo commit history |
+| Live demo (deployed) | [Live demo](#live-demo) — <https://orbyt-ashen.vercel.app> |
+| Deployed contract address | [Deployment & on-chain proof](#deployment--on-chain-proof) |
+| Transaction hash of a contract call (verifiable) | [Deployment & on-chain proof](#transaction-hash-of-a-contract-call) |
+| Screenshot: wallet options available | [Screenshots](#screenshots) |
+| Screenshot: wallet connected state | [Screenshots](#screenshots) |
+| Screenshot: balance displayed | [Screenshots](#screenshots) |
+| Screenshot: successful testnet transaction | [Screenshots](#screenshots) |
+| Screenshot: transaction result shown to the user | [Screenshots](#screenshots) |
+| Screenshot: mobile responsive UI | [Screenshots](#screenshots) |
+
 ## Live demo
 
 Marketing site + dashboard (Stellar **Testnet**): **https://orbyt-ashen.vercel.app**
@@ -62,14 +79,11 @@ See [`SPEC.md`](./SPEC.md) for the full contract interface, error cases, and eve
 ## Screenshots
 
 All screenshots are captured against Stellar **Testnet** with the Freighter wallet.
+See [`docs/screenshots/`](docs/screenshots/) for what each image must show.
 
 ### Wallet options available
 
 ![The wallet connect dialog showing the available wallet options](docs/screenshots/00-wallet-options.png)
-
-### Mobile responsive UI
-
-![The app rendered on a mobile viewport, showing the responsive layout](docs/screenshots/05-mobile-responsive.png)
 
 ### Wallet connected state
 
@@ -86,6 +100,10 @@ All screenshots are captured against Stellar **Testnet** with the Freighter wall
 ### Transaction result shown to the user
 
 ![The transaction result (hash / success state) surfaced back to the user in the UI](docs/screenshots/04-transaction-result.png)
+
+### Mobile responsive UI
+
+![The app rendered on a mobile viewport, showing the responsive layout](docs/screenshots/05-mobile-responsive.png)
 
 ## Quick start
 
@@ -113,9 +131,7 @@ npm run dev                  # start polling testnet
 cd frontend
 cp .env.example .env         # fill in VITE_CONTRACT_ID, etc.
 npm install
-npm run dev
+npm run dev                  # http://localhost:5173
 ```
 
 Requires the [Freighter](https://www.freighter.app/) browser wallet to connect and sign.
-
-
