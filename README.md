@@ -59,9 +59,4 @@ npm run dev
 
 Requires the [Freighter](https://www.freighter.app/) browser wallet to connect and sign.
 
-## Demo tip
 
-Create a plan with a short interval (60-120 seconds) instead of a real billing
-period. Subscribe, then start the keeper bot and watch it charge automatically
-every cycle with no further signatures from the subscriber -- that's the whole
-point of the design.
