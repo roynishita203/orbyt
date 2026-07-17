@@ -21,11 +21,6 @@ scripts/deploy.sh      Testnet deploy script
 | Live demo (deployed) | [Live demo](#live-demo) — <https://orbytmarket.vercel.app> |
 | Deployed contract address | [Deployment & on-chain proof](#deployment--on-chain-proof) |
 | Transaction hash of a contract call (verifiable) | [Deployment & on-chain proof](#transaction-hash-of-a-contract-call) |
-| Screenshot: wallet options available | [Screenshots](#screenshots) |
-| Screenshot: wallet connected state | [Screenshots](#screenshots) |
-| Screenshot: balance displayed | [Screenshots](#screenshots) |
-| Screenshot: successful testnet transaction | [Screenshots](#screenshots) |
-| Screenshot: transaction result shown to the user | [Screenshots](#screenshots) |
 | Screenshot: mobile responsive UI | [Screenshots](#screenshots) |
 
 ## Live demo
