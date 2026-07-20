@@ -107,55 +107,6 @@ Freighter and submit through the RPC). The off-chain **keeper** polls
 contract moves funds from the vault to the merchant via the SAC token and emits events. The
 frontend replays those events through the RPC to reconstruct live plan/subscription state.
 
-## Screenshots
-
-All captured live from <https://orbytmarket.vercel.app> (Stellar **Testnet**).
-
-### Landing page
-
-![SubVault landing page — Set it. Forget it. Get paid.](docs/screenshots/landing-hero.png)
-
-### Dashboard — wallet options available
-
-Subscriber view with the wallet connect option (Freighter) in the header.
-
-![Dashboard subscriber view with the wallet connect option](docs/screenshots/00-wallet-options.png)
-
-### Merchant — create a plan
-
-![Merchant view showing the Create Plan form, revenue, and active subscribers](docs/screenshots/merchant-view.png)
-
-### Get started
-
-![Get started guide: get a wallet, fund your vault, let the keeper bot take over](docs/screenshots/start-page.png)
-
-### Mobile responsive UI
-
-The app adapts to a mobile viewport — landing page and dashboard:
-
-<p>
-  <img src="docs/screenshots/mobile-responsive.png" alt="SubVault landing page on a mobile viewport" width="30%" />
-  <img src="docs/screenshots/05-mobile-responsive.png" alt="Dashboard on a mobile viewport" width="30%" />
-  <img src="docs/screenshots/landing-mobile.png" alt="Landing page on a mobile viewport" width="30%" />
-</p>
-
-### Wallet-connected flow (capture with your own wallet)
-
-The states below require a connected [Freighter](https://www.freighter.app/) wallet with a
-funded testnet account, so they can't be captured headlessly. Drop the PNGs into
-[`docs/screenshots/`](docs/screenshots/) using these exact names and they will render here
-automatically (see [`docs/screenshots/README.md`](docs/screenshots/README.md) for what each
-must show):
-
-- **Wallet connected state** — `01-wallet-connected.png`
-- **Balance displayed** — `02-balance-displayed.png`
-- **Successful testnet transaction** — `03-testnet-transaction.png`
-- **Transaction result shown to the user** — `04-transaction-result.png`
-
-### Additional — uploaded UI screenshot
-
-<img width="807" alt="SubVault UI screenshot" src="https://github.com/user-attachments/assets/9fa06a35-c08b-4cf5-99d0-f8cdd39295ff" />
-
 ## Quick start
 
 ### 1. Contract
